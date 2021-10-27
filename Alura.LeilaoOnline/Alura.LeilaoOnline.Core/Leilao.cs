@@ -31,7 +31,9 @@ namespace Alura.LeilaoOnline.Core
         public void TerminaPregao()
         {
 
-            Ganhador = Lances.Last(); //Last() = pegar o ultimo da lista
+            Ganhador = Lances
+                .OrderBy(l => l.Valor)
+                .Last(); //Last() = pegar o ultimo da lista
         }
     }
 }
