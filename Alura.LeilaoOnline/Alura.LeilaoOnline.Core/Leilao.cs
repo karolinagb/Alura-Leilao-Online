@@ -3,6 +3,13 @@ using System.Linq;
 
 namespace Alura.LeilaoOnline.Core
 {
+    public enum EstadoLeilao
+    {
+        LeilaoAntesDoPregao,
+        LeilaoEmAndamento,
+        LeilaoFinalizado,
+    }
+
     public class Leilao
     {
         private IList<Lance> _lances;
@@ -11,29 +18,38 @@ namespace Alura.LeilaoOnline.Core
         //O mesmo que public IEnumerable<Lance> Lances { return _lances }
         public IEnumerable<Lance> Lances => _lances;
         public Lance Ganhador { get; private set; }
+        public EstadoLeilao EstadoLeilao { get; private set; }
 
         public Leilao(string peca)
         {
             Peca = peca;
             _lances = new List<Lance>();
+            EstadoLeilao = EstadoLeilao.LeilaoAntesDoPregao;
         }
 
         public void ReceberLance(Interessada cliente, double valor)
         {
-            _lances.Add(new Lance(cliente, valor));
+            if(EstadoLeilao == EstadoLeilao.LeilaoEmAndamento)
+            {
+                _lances.Add(new Lance(cliente, valor));
+            }
         }
 
         public void IniciarPregao()
         {
-
+            EstadoLeilao = EstadoLeilao.LeilaoEmAndamento;
         }
 
         public void TerminaPregao()
         {
 
             Ganhador = Lances
+                .DefaultIfEmpty(new Lance(null, 0)) //Definir um valor default
                 .OrderBy(l => l.Valor)
-                .Last(); //Last() = pegar o ultimo da lista
+                .LastOrDefault(); //LastOrDefault() = pegar o ultimo da lista, se tiver vazio ele retorna
+            //um objeto default qualquer
+
+            EstadoLeilao = EstadoLeilao.LeilaoFinalizado;
         }
     }
 }
