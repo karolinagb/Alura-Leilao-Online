@@ -121,14 +121,16 @@ namespace Alura.LeilaoOnline.Testes
 
         [Theory]
         [InlineData (2, new double[] { 100, 0, 400, -100, -300})]
-        public void NaoAceitaLanceDadoValorLanceMenorQueZero(int valorEsperado, double[] lances)
+        public void NaoAceitaLanceDadoValorLanceNegativo(int valorEsperado, double[] lances)
         {
+            //Arranje
             var leilao = new Leilao("Monalisa");
             var fulano = new Interessada("Fulano", leilao);
             var maria = new Interessada("Maria", leilao);
 
             leilao.IniciarPregao();
 
+            //Act
             for(int i = 0; i < lances.Length; i++)
             {
                 var valor = lances[i];
@@ -144,6 +146,7 @@ namespace Alura.LeilaoOnline.Testes
 
             leilao.TerminaPregao();
 
+            //Assert
             var valorObtido = leilao.Lances.Count();
             Assert.Equal(valorEsperado, valorObtido);
         }
