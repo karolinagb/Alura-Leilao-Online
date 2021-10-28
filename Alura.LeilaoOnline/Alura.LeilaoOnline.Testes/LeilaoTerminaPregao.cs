@@ -94,5 +94,42 @@ namespace Alura.LeilaoOnline.Testes
                 "Utilize o método IniciaPregao()";
             Assert.Equal(mensagemEsperada, mensagemObtida.Message);
         }
+
+        //Arrange
+        //Dado leilao com valor destino
+        //Act
+        //Quando termina o pregão
+        //Assert
+        //O vencedor é o lance com valor superior ao destino mais próximo
+        [Theory]
+        [InlineData(1200, 1250, new double[] { 800, 1150, 1400, 1250 })]
+        public void RetornaValorSuperiorMaixProximoDadoLeilaoValorEsperado(double valorDestino, double valorEsperado, double[] ofertas)
+        {
+            //Arranje
+            var leilao = new Leilao("Van Gogh", valorDestino);
+            var fulano = new Interessada("Fulano", leilao);
+            var maria = new Interessada("Maria", leilao);
+
+            leilao.IniciarPregao();
+
+            for (int i = 0; i < ofertas.Length; i++)
+            {
+                var valor = ofertas[i];
+                if (i % 2 == 0)
+                {
+                    leilao.ReceberLance(fulano, valor);
+                }
+                else
+                {
+                    leilao.ReceberLance(maria, valor);
+                }
+            }
+
+            //Act
+            leilao.TerminaPregao();
+
+            //Assert
+
+        }
     }
 }
