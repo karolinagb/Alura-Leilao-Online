@@ -33,14 +33,23 @@ namespace Alura.LeilaoOnline.Testes
             //Arranje - cenário - dados de entrada
             var leilao = new Leilao("Van Gogh");
             var fulano = new Interessada("Fulano", leilao);
+            var maria = new Interessada("Maria", leilao);
 
             leilao.IniciarPregao();
 
-            foreach(var valor in ofertas)
+            for (int i = 0; i < ofertas.Length; i++)
             {
-                leilao.ReceberLance(fulano, valor);
+                var valor = ofertas[i];
+                if (i % 2 == 0)
+                {
+                    leilao.ReceberLance(fulano, valor);
+                }
+                else
+                {
+                    leilao.ReceberLance(maria, valor);
+                }
             }
-            
+
             //Act - método sob teste
             leilao.TerminaPregao();
 

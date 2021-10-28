@@ -32,7 +32,7 @@ namespace Alura.LeilaoOnline.Testes
             leilao.ReceberLance(fulano, 1000);
 
             //Assert
-            var valorEsperado = 2;
+            var valorEsperado = 1;
             var valorObtido = leilao.Lances.Count();
 
             Assert.Equal(valorEsperado, valorObtido);
@@ -46,12 +46,21 @@ namespace Alura.LeilaoOnline.Testes
             //Arranje - cenário - dados de entrada
             var leilao = new Leilao("Van Gogh");
             var fulano = new Interessada("Fulano", leilao);
+            var maria = new Interessada("Maria", leilao);
 
             leilao.IniciarPregao();
 
-            foreach (var valor in ofertas)
+            for(int i = 0; i < ofertas.Length; i++)
             {
-                leilao.ReceberLance(fulano, valor);
+                var valor = ofertas[i];
+                if(i % 2 == 0)
+                {
+                    leilao.ReceberLance(fulano, valor);
+                }
+                else
+                {
+                    leilao.ReceberLance(maria, valor);
+                }
             }
 
             leilao.TerminaPregao(); //O termina pregao faz parte do cenário
@@ -94,6 +103,32 @@ namespace Alura.LeilaoOnline.Testes
             var valorObtido = leilao.Ganhador.Valor;
 
             Assert.Equal(valorEsperado, valorObtido);
+        }
+
+        //Cenário 3
+        //Arranje
+        //Dado leilão iniciado e interessado X realizou o ultimo lance
+        //Act
+        //Quando mesmo interessado X realiza o p´roximo lance
+        //Assert
+        //Então leilão não aceita o segundo lance
+        [Fact]
+        public void NaoAceitaProximoLanceDadoMesmoInteressadoRealizouUltimoLance()
+        {
+            //Arrange - cenário
+            var leilao = new Leilao("Van Gogh");
+            var fulano = new Interessada("Fulano", leilao);
+            leilao.IniciarPregao();
+            leilao.ReceberLance(fulano, 800); //Lance inicial
+
+            //Act - método sob teste
+            leilao.ReceberLance(fulano, 1000); //Lance consecutivo
+
+            //Assert - Resultado
+            var valorEsperado = 1;
+            var valorObtido = leilao.Lances.Count();
+            Assert.Equal(valorEsperado, valorObtido);
+
         }
     }
 }
