@@ -1,4 +1,5 @@
 ﻿using Alura.LeilaoOnline.Core;
+using Alura.LeilaoOnline.Core.Interfaces;
 using System;
 using Xunit;
 
@@ -24,7 +25,9 @@ namespace Alura.LeilaoOnline.Testes
         public void RetornaMaiorValorDadoLeilaoComPeloMenosUmLance(double valorEsperado, double[] ofertas) //Classes de teste precisam ser publicas
         {
             //Arranje - cenário - dados de entrada
-            var leilao = new Leilao("Van Gogh");
+
+            IModalidadeAvaliacao modalidade = new MaiorValor();
+            var leilao = new Leilao("Van Gogh", modalidade);
             var fulano = new Interessada("Fulano", leilao);
             var maria = new Interessada("Maria", leilao);
 
@@ -63,7 +66,8 @@ namespace Alura.LeilaoOnline.Testes
         public void RetornaZeroDadoLeilaoSemLances()
         {
             //Arranje - cenário - dados de entrada
-            var leilao = new Leilao("Van Gogh");
+            var modalidade = new MaiorValor();
+            var leilao = new Leilao("Van Gogh", modalidade);
 
             leilao.IniciarPregao();
 
@@ -81,7 +85,8 @@ namespace Alura.LeilaoOnline.Testes
         public void LancaInvalidOperationExceptionDadoPregaoNaoIniciado()
         {
             //Arranje - cenário - dados de entrada
-            var leilao = new Leilao("Van Gogh");
+            var modalidade = new MaiorValor();
+            var leilao = new Leilao("Van Gogh", modalidade);
 
             //Assert
             //Para testar exceções com xUnit
@@ -102,11 +107,12 @@ namespace Alura.LeilaoOnline.Testes
         //Assert
         //O vencedor é o lance com valor superior ao destino mais próximo
         [Theory]
-        [InlineData(1200, 1250, new double[] { 800, 1150, 1400, 1250 })]
+        [InlineData(1200, 1250, new double[] { 1400, 1250 })]
         public void RetornaValorSuperiorMaixProximoDadoLeilaoValorEsperado(double valorDestino, double valorEsperado, double[] ofertas)
         {
             //Arranje
-            var leilao = new Leilao("Van Gogh", valorDestino);
+            IModalidadeAvaliacao modalidade = new OfertaSuperiorMaisProxima(valorDestino);
+            var leilao = new Leilao("Van Gogh", modalidade);
             var fulano = new Interessada("Fulano", leilao);
             var maria = new Interessada("Maria", leilao);
 
@@ -129,7 +135,7 @@ namespace Alura.LeilaoOnline.Testes
             leilao.TerminaPregao();
 
             //Assert
-
+            Assert.Equal(valorEsperado, leilao.Ganhador.Valor);
         }
     }
 }

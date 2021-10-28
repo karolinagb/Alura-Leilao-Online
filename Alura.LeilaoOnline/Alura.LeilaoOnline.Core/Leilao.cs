@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Alura.LeilaoOnline.Core.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -15,19 +16,21 @@ namespace Alura.LeilaoOnline.Core
     {
         private IList<Lance> _lances;
         private List<Interessada> _ultimosClientes = new List<Interessada>();
+        private IModalidadeAvaliacao _modalidadeAvaliacao;
+
         public string Peca { get; }
         //O mesmo que public IEnumerable<Lance> Lances { return _lances }
         public IEnumerable<Lance> Lances => _lances;
         public Lance Ganhador { get; private set; }
         public EstadoLeilao EstadoLeilao { get; private set; }
-        public double ValorDestino { get; }
+       
 
-        public Leilao(string peca, double valorDestino = 0)
+        public Leilao(string peca, IModalidadeAvaliacao modalidadeAvaliacao)
         {
             Peca = peca;
             _lances = new List<Lance>();
             EstadoLeilao = EstadoLeilao.LeilaoAntesDoPregao;
-            ValorDestino = valorDestino; //Se o valor destino for passado significa que a modalidade é "superior mais próximo, senão ele recebe 0"
+            _modalidadeAvaliacao = modalidadeAvaliacao;
         }
 
         public void ReceberLance(Interessada cliente, double valor)
@@ -52,24 +55,7 @@ namespace Alura.LeilaoOnline.Core
                 "Utilize o método IniciaPregao()");
             }
 
-            if (ValorDestino > 0)
-            {
-                //Ganhador por oferta superior mais próxima
-                Ganhador = Lances
-                    .DefaultIfEmpty(new Lance(null, 0)) //Definir um valor default se tivermos uma lista vazia
-                    .Where(x => x.Valor > ValorDestino)
-                    .OrderBy(x => x.Valor)
-                    .FirstOrDefault();
-            }
-            else
-            {
-                //Ganhador por maior valor
-                Ganhador = Lances
-               .DefaultIfEmpty(new Lance(null, 0)) //Definir um valor default
-               .OrderBy(l => l.Valor)
-               .LastOrDefault(); //LastOrDefault() = pegar o ultimo da lista, se tiver vazio ele retorna
-                                 //um objeto default qualquer
-            }
+            Ganhador = _modalidadeAvaliacao.Avalia(this); //O this passa a propria classe leilao para o avaliador
 
             EstadoLeilao = EstadoLeilao.LeilaoFinalizado;
         }

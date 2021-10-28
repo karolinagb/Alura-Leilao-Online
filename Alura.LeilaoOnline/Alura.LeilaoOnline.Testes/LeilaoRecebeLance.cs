@@ -20,7 +20,8 @@ namespace Alura.LeilaoOnline.Testes
         public void NaoPermiteNovosLancesDadoLeilaoFinalizado()
         {
             //Arranje - cenário - dados de entrada
-            var leilao = new Leilao("Van Gogh");
+            var modalidade = new MaiorValor();
+            var leilao = new Leilao("Van Gogh", modalidade);
             var fulano = new Interessada("Fulano", leilao);
 
             leilao.IniciarPregao();
@@ -46,7 +47,8 @@ namespace Alura.LeilaoOnline.Testes
         public void NaoPermiteNovosLancesDadoLeilaoFinalizado2(int valorEsperado, double[] ofertas)
         {
             //Arranje - cenário - dados de entrada
-            var leilao = new Leilao("Van Gogh");
+            var modalidade = new MaiorValor();
+            var leilao = new Leilao("Van Gogh", modalidade);
             var fulano = new Interessada("Fulano", leilao);
             var maria = new Interessada("Maria", leilao);
 
@@ -83,7 +85,8 @@ namespace Alura.LeilaoOnline.Testes
         [Fact]
         public void IgnorarLancesDadoLeilaoSemIniciarPregao()
         {
-            var leilao = new Leilao("Monalisa");
+            var modalidade = new MaiorValor();
+            var leilao = new Leilao("Monalisa", modalidade);
             var fulano = new Interessada("Fulano", leilao);
 
             leilao.ReceberLance(fulano, 1000);
@@ -104,7 +107,8 @@ namespace Alura.LeilaoOnline.Testes
         public void NaoAceitaProximoLanceDadoMesmoInteressadoRealizouUltimoLance()
         {
             //Arrange - cenário
-            var leilao = new Leilao("Van Gogh");
+            var modalidade = new MaiorValor();
+            var leilao = new Leilao("Van Gogh", modalidade);
             var fulano = new Interessada("Fulano", leilao);
             leilao.IniciarPregao();
             leilao.ReceberLance(fulano, 800); //Lance inicial
@@ -124,7 +128,8 @@ namespace Alura.LeilaoOnline.Testes
         public void NaoAceitaLanceDadoValorLanceNegativo(int valorEsperado, double[] lances)
         {
             //Arranje
-            var leilao = new Leilao("Monalisa");
+            var modalidade = new MaiorValor();
+            var leilao = new Leilao("Monalisa", modalidade);
             var fulano = new Interessada("Fulano", leilao);
             var maria = new Interessada("Maria", leilao);
 
