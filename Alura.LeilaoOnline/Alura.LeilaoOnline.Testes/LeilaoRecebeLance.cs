@@ -6,6 +6,8 @@ namespace Alura.LeilaoOnline.Testes
 {
     public class LeilaoRecebeLance
     {
+        //OBS: Teste para fazer: Não pode haver lançamentos se não tiver interessados
+
         //Cenário 1
         //Arranje
         //Dado leilão finalizado com X lances
@@ -39,7 +41,7 @@ namespace Alura.LeilaoOnline.Testes
         }
 
         [Theory]
-        [InlineData(4, new double[] { 1000, 1200, 1400, 1300 })]
+        [InlineData(2, new double[] { 1000, 1200, 1400, 1300 })]
         [InlineData(2, new double[] { 800, 900 })]
         public void NaoPermiteNovosLancesDadoLeilaoFinalizado2(int valorEsperado, double[] ofertas)
         {
@@ -50,10 +52,10 @@ namespace Alura.LeilaoOnline.Testes
 
             leilao.IniciarPregao();
 
-            for(int i = 0; i < ofertas.Length; i++)
+            for (int i = 0; i < ofertas.Length; i++)
             {
                 var valor = ofertas[i];
-                if(i % 2 == 0)
+                if (i % 2 == 0)
                 {
                     leilao.ReceberLance(fulano, valor);
                 }
@@ -88,22 +90,8 @@ namespace Alura.LeilaoOnline.Testes
 
             Assert.Equal(0, leilao.Lances.Count());
         }
-        
-        [Fact]
-        public void RetornaZeroDadoLeilaoSemLances()
-        {
-            //Arranje - cenário - dados de entrada
-            var leilao = new Leilao("Van Gogh");
 
-            //Act - método sob teste
-            leilao.TerminaPregao();
 
-            //Assert
-            var valorEsperado = 0;
-            var valorObtido = leilao.Ganhador.Valor;
-
-            Assert.Equal(valorEsperado, valorObtido);
-        }
 
         //Cenário 3
         //Arranje
@@ -129,6 +117,35 @@ namespace Alura.LeilaoOnline.Testes
             var valorObtido = leilao.Lances.Count();
             Assert.Equal(valorEsperado, valorObtido);
 
+        }
+
+        [Theory]
+        [InlineData (2, new double[] { 100, 0, 400, -100, -300})]
+        public void NaoAceitaLanceDadoValorLanceMenorQueZero(int valorEsperado, double[] lances)
+        {
+            var leilao = new Leilao("Monalisa");
+            var fulano = new Interessada("Fulano", leilao);
+            var maria = new Interessada("Maria", leilao);
+
+            leilao.IniciarPregao();
+
+            for(int i = 0; i < lances.Length; i++)
+            {
+                var valor = lances[i];
+                if (i % 2 == 0)
+                {
+                    leilao.ReceberLance(maria, valor);
+                }
+                else
+                {
+                    leilao.ReceberLance(fulano, valor);
+                }
+            }
+
+            leilao.TerminaPregao();
+
+            var valorObtido = leilao.Lances.Count();
+            Assert.Equal(valorEsperado, valorObtido);
         }
     }
 }
